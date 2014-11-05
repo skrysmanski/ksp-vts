@@ -1,0 +1,8 @@
+.hg/
+bin/
+obj/
+_ReSharper.*
+*.user
+*.suo
+.hgignore
+VirtualTargetingSystem/Output/Plugins/

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="KspPath.props" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{91C3CDDC-56D8-46AA-9C4C-E8291E1952D8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VTS</RootNamespace>
+    <AssemblyName>VirtualTargetingSystem</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Output\Plugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Output\Plugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(KspPath)\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="UnityEngine">
+      <HintPath>$(KspPath)\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Api\AngleUtils.cs" />
+    <Compile Include="Api\CelestialBodyExtensions.cs" />
+    <Compile Include="Api\CelestialBodyHelper.cs" />
+    <Compile Include="Api\Coordinates.cs" />
+    <Compile Include="Api\MouseButtons.cs" />
+    <Compile Include="Api\PartModuleExtensions.cs" />
+    <Compile Include="Api\PluginCore.cs" />
+    <Compile Include="Api\Window.cs" />
+    <Compile Include="GuiUtils.cs" />
+    <Compile Include="Api\GlobalLocation.cs" />
+    <Compile Include="SystemStates.cs" />
+    <Compile Include="ToolbarWrapper.cs" />
+    <Compile Include="VtsMainWindow.cs" />
+    <Compile Include="Api\Line.cs" />
+    <Compile Include="VirtualTarget.cs" />
+    <Compile Include="Api\ReSharperAttributes.cs" />
+    <Compile Include="VtsPartModule.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VtsCore.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KspPath.props">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Output\MM_AddToCommandModules.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Output\Resources\texMainWindowButton.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>(robocopy "$(ProjectDir)Output" "$(KspPath)\GameData\VirtualTargetingSystem" /MIR) ^&amp; IF %25ERRORLEVEL%25 LEQ 1 exit 0
+</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
