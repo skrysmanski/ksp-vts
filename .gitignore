@@ -6,3 +6,5 @@ _ReSharper.*
 *.suo
 .hgignore
 VirtualTargetingSystem/Output/Plugins/
+Package/GameData/VirtualTargetingSystem/
+VirtualTargetingSystem.zip
