@@ -67,10 +67,14 @@
     <Compile Include="VtsCore.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+    </None>
     <None Include="KspPath.props">
       <SubType>Designer</SubType>
     </None>
     <None Include="Output\MM_AddToCommandModules.cfg" />
+    <None Include="Output\VirtualTargetingSystem.version" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Output\Resources\texMainWindowButton.png" />

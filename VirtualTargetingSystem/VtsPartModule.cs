@@ -21,8 +21,6 @@ using UnityEngine;
 
 namespace VTS
 {
-    // TODO: Add miniAVC
-
     [UsedImplicitly]
     public class VtsPartModule : PartModule
     {

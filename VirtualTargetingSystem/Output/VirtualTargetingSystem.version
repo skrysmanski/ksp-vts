@@ -1,0 +1,7 @@
+{
+    "NAME": "Virtual Targeting System",
+    "URL": "http://ksp-avc.cybutek.net/version.php?id=78",
+    "DOWNLOAD": "https://github.com/skrysmanski/ksp-vts",
+    "VERSION": { "MAJOR": 0, "MINOR": 9, "PATCH": 0, "BUILD": 0 },
+    "KSP_VERSION": { "MAJOR": 0, "MINOR": 25, "PATCH": 0 } 
+}
