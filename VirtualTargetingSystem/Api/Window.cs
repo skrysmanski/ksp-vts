@@ -39,6 +39,16 @@ namespace KerbalSpaceProgram.Api
         [PublicAPI]
         public bool IsOpen { get; set; }
 
+        /// <summary>
+        /// The name of the control that currently has the focus. Use <see cref="SetNextControlName"/>
+        /// to set the name for a control.
+        /// </summary>
+        [PublicAPI]
+        public static string NameOfFocusedControl
+        {
+            get { return GUI.GetNameOfFocusedControl(); }
+        }
+
         protected Window(int windowId, string title, GUIStyle windowStyle = null, Vector2 windowPos = new Vector2())
             : this(windowId, title, windowStyle, new Rect(windowPos.x, windowPos.y, 0, 0))
         {
@@ -93,21 +103,32 @@ namespace KerbalSpaceProgram.Api
         }
 
         [PublicAPI]
-        protected static void Label(string text, GUIStyle guiStyle = null)
+        protected static void Label(string text, GUIStyle guiStyle = null, params GUILayoutOption[] options)
         {
-            GUILayout.Label(text, guiStyle ?? HighLogic.Skin.label);
+            GUILayout.Label(text, guiStyle ?? HighLogic.Skin.label, options);
         }
 
         [PublicAPI]
-        protected static string TextField(string text, int maxLength = -1, GUIStyle guiStyle = null, params GUILayoutOption[] options)
+        protected static void TextField(ref string text, int maxLength = -1, GUIStyle guiStyle = null, params GUILayoutOption[] options)
         {
-            return GUILayout.TextField(text, maxLength, guiStyle ?? HighLogic.Skin.textField, options);
+            text = GUILayout.TextField(text, maxLength, guiStyle ?? HighLogic.Skin.textField, options);
         }
 
         [PublicAPI]
-        protected static bool Button(string text, GUIStyle guiStyle = null)
+        protected static bool Button(string text, GUIStyle guiStyle = null, params GUILayoutOption[] options)
         {
-            return GUILayout.Button(text, guiStyle ?? HighLogic.Skin.button);
+            return GUILayout.Button(text, guiStyle ?? HighLogic.Skin.button, options);
+        }
+
+        [PublicAPI]
+        protected static void SetNextControlName([NotNull] string controlName)
+        {
+            GUI.SetNextControlName(controlName);
+        }
+
+        public void SetFocus(string controlName)
+        {
+            GUI.FocusControl(controlName);
         }
 
         protected struct ControlGroup : IDisposable

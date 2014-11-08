@@ -24,6 +24,12 @@ namespace VTS
     {
         private const int WINDOW_ID = 653285586;
 
+        private const float EDITOR_COL1_WIDTH = 60;
+        private const float EDITOR_COL2_WIDTH = 100;
+
+        private const string LATITUDE_EDIT_FIELD_NAME = "vts.mainwnd.lat";
+        private const string LONGITUDE_EDIT_FIELD_NAME = "vts.mainwnd.lon";
+
         [NotNull]
         private readonly VtsPartModule m_module;
 
@@ -31,6 +37,8 @@ namespace VTS
         {
             get { return this.m_module.TargetLocation; }
         }
+
+        private readonly GUIStyle m_editorLabelStyle;
 
         private string m_latitudeString;
 
@@ -42,6 +50,12 @@ namespace VTS
                 : base(WINDOW_ID, "Virtual Targeting", windowPos: windowPos)
         {
             this.m_module = module;
+            this.m_editorLabelStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                alignment = TextAnchor.MiddleRight,
+                fixedWidth = EDITOR_COL1_WIDTH,
+            };
+
             Reset();
         }
 
@@ -63,6 +77,7 @@ namespace VTS
             {
                 if (Button("Pick Target Location"))
                 {
+                    RemoveFocusFromEditFields();
                     this.m_module.StartPickingVirtualTarget();
                 }
             }
@@ -70,6 +85,7 @@ namespace VTS
             {
                 if (Button("Stop Target Picking"))
                 {
+                    RemoveFocusFromEditFields();
                     this.m_module.StopPickingVirtualTarget(keepTarget: false);
                 }
                 else
@@ -81,11 +97,13 @@ namespace VTS
 
             if (Button("Set as Target") && this.m_module.SystemState == SystemStates.TargetSelected)
             {
+                RemoveFocusFromEditFields();
                 this.m_module.SetAsTarget();
             }
 
             if (Button("Delete Virtual Target") && this.m_module.SystemState == SystemStates.TargetSelected)
             {
+                RemoveFocusFromEditFields();
                 this.m_module.DeleteVirtualTarget();
                 Reset();
             }
@@ -95,39 +113,48 @@ namespace VTS
                 Label(this.m_errorMessage);
             }
 
-            using (HorizontalLayout)
+            if (Event.current.Equals(Event.KeyboardEvent("return")))
             {
-                Label("Reference Body:");
-                Label(this.TargetLocation.Body.bodyName);
+                RemoveFocusFromEditFields();
             }
 
             using (HorizontalLayout)
             {
-                Label("Latitude:");
-                this.m_latitudeString = TextField(this.m_latitudeString, options: GUILayout.ExpandHeight(false));
+                Label("Planet:", m_editorLabelStyle);
+                Label(this.TargetLocation.Body.bodyName, options: GUILayout.Width(EDITOR_COL2_WIDTH));
             }
 
             using (HorizontalLayout)
             {
-                Label("Longitude:");
-                this.m_longitudeString = TextField(this.m_longitudeString, options: GUILayout.ExpandHeight(false));
+                Label("Latitude:", m_editorLabelStyle);
+                SetNextControlName(LATITUDE_EDIT_FIELD_NAME);
+                TextField(ref this.m_latitudeString, options: GUILayout.Width(EDITOR_COL2_WIDTH));
             }
 
             using (HorizontalLayout)
             {
-                Label("Biome:");
-                Label(this.TargetLocation.BiomeName);
+                Label("Longitude:", m_editorLabelStyle);
+                SetNextControlName(LONGITUDE_EDIT_FIELD_NAME);
+                TextField(ref this.m_longitudeString, options: GUILayout.Width(EDITOR_COL2_WIDTH));
+            }
+
+            using (HorizontalLayout)
+            {
+                Label("Biome:", m_editorLabelStyle);
+                Label(this.TargetLocation.BiomeName, options: GUILayout.Width(EDITOR_COL2_WIDTH));
             }
 
             using (HorizontalLayout)
             {
                 if (Button("Apply") && this.m_module.SystemState != SystemStates.PickingTarget)
                 {
+                    RemoveFocusFromEditFields();
                     UpdateLocation();
                 }
 
                 if (Button("Reset") && this.m_module.SystemState != SystemStates.PickingTarget)
                 {
+                    RemoveFocusFromEditFields();
                     Reset();
                 }
             }
@@ -155,6 +182,20 @@ namespace VTS
                                               new Coordinates(latitude: latitude, longitude: longitude));
             this.m_module.SetTargetLocation(location);
             Reset();
+        }
+
+        /// <summary>
+        /// Removes the focus from the edit fields, if they actually have the focus.
+        /// </summary>
+        private void RemoveFocusFromEditFields()
+        {
+            switch (NameOfFocusedControl)
+            {
+                case LATITUDE_EDIT_FIELD_NAME:
+                case LONGITUDE_EDIT_FIELD_NAME:
+                    SetFocus(null);
+                    break;
+            }
         }
     }
 }
