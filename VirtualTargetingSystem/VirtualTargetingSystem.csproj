@@ -53,6 +53,7 @@
     <Compile Include="Api\MouseButtons.cs" />
     <Compile Include="Api\PartModuleExtensions.cs" />
     <Compile Include="Api\PluginCore.cs" />
+    <Compile Include="Api\StringExtensions.cs" />
     <Compile Include="Api\Window.cs" />
     <Compile Include="GuiUtils.cs" />
     <Compile Include="Api\GlobalLocation.cs" />

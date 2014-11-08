@@ -154,6 +154,24 @@ namespace VTS
 
             using (HorizontalLayout)
             {
+                Label("Altitude:", m_editorLabelStyle);
+
+                string value;
+
+                if (this.SystemState != SystemStates.NoTargetSelected)
+                {
+                    value = "{0:0.} m".With(this.TargetLocation.Altitude);
+                }
+                else
+                {
+                    value = "n/a";
+                }
+
+                Label(value, options: GUILayout.Width(EDITOR_COL2_WIDTH));
+            }
+
+            using (HorizontalLayout)
+            {
                 if (Button("Apply") && this.SystemState != SystemStates.PickingTarget)
                 {
                     RemoveFocusFromEditFields();
