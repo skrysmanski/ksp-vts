@@ -30,6 +30,9 @@ namespace VTS
         private const string LATITUDE_EDIT_FIELD_NAME = "vts.mainwnd.lat";
         private const string LONGITUDE_EDIT_FIELD_NAME = "vts.mainwnd.lon";
 
+        /// <summary>
+        /// The <see cref="VtsPartModule"/> this window belongs to.
+        /// </summary>
         [NotNull]
         private readonly VtsPartModule m_module;
 
@@ -66,8 +69,8 @@ namespace VTS
 
         private void Reset()
         {
-            this.m_latitudeString = this.TargetLocation.Coordinates.Latitude.ToString("F3");
-            this.m_longitudeString = this.TargetLocation.Coordinates.Longitude.ToString("F3");
+            this.m_latitudeString = this.TargetLocation.Coordinates.Latitude.ToString("F4");
+            this.m_longitudeString = this.TargetLocation.Coordinates.Longitude.ToString("F4");
         }
 
         protected override void OnWindow()
@@ -161,6 +164,27 @@ namespace VTS
                 if (this.SystemState != SystemStates.NoTargetSelected)
                 {
                     value = "{0:0.} m".With(this.TargetLocation.Altitude);
+                }
+                else
+                {
+                    value = "n/a";
+                }
+
+                Label(value, options: GUILayout.Width(EDITOR_COL2_WIDTH));
+            }
+
+            using (HorizontalLayout)
+            {
+                Label("Distance:", m_editorLabelStyle);
+
+                string value;
+
+                if (this.SystemState != SystemStates.NoTargetSelected)
+                {
+                    var targetPos = this.TargetLocation.Position;
+                    var vesselPos = this.m_module.vessel.GetWorldPos3D();
+
+                    value = "{0:0.} m".With((targetPos - vesselPos).magnitude);
                 }
                 else
                 {
