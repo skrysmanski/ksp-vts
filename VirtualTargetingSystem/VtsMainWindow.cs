@@ -38,6 +38,11 @@ namespace VTS
             get { return this.m_module.TargetLocation; }
         }
 
+        private SystemStates SystemState
+        {
+            get { return this.m_module.SystemState; }
+        }
+
         private readonly GUIStyle m_editorLabelStyle;
 
         private string m_latitudeString;
@@ -73,7 +78,7 @@ namespace VTS
                 return;
             }
 
-            if (this.m_module.SystemState != SystemStates.PickingTarget)
+            if (this.SystemState != SystemStates.PickingTarget)
             {
                 if (Button("Pick Target Location"))
                 {
@@ -95,13 +100,13 @@ namespace VTS
                 }
             }
 
-            if (Button("Set as Target") && this.m_module.SystemState == SystemStates.TargetSelected)
+            if (Button("Set as Target") && this.SystemState == SystemStates.TargetSelected)
             {
                 RemoveFocusFromEditFields();
                 this.m_module.SetAsTarget();
             }
 
-            if (Button("Delete Virtual Target") && this.m_module.SystemState == SystemStates.TargetSelected)
+            if (Button("Delete Virtual Target") && this.SystemState == SystemStates.TargetSelected)
             {
                 RemoveFocusFromEditFields();
                 this.m_module.DeleteVirtualTarget();
@@ -141,18 +146,21 @@ namespace VTS
             using (HorizontalLayout)
             {
                 Label("Biome:", m_editorLabelStyle);
-                Label(this.TargetLocation.BiomeName, options: GUILayout.Width(EDITOR_COL2_WIDTH));
+
+                string value = this.SystemState != SystemStates.NoTargetSelected ? this.TargetLocation.BiomeName : "n/a";
+
+                Label(value, options: GUILayout.Width(EDITOR_COL2_WIDTH));
             }
 
             using (HorizontalLayout)
             {
-                if (Button("Apply") && this.m_module.SystemState != SystemStates.PickingTarget)
+                if (Button("Apply") && this.SystemState != SystemStates.PickingTarget)
                 {
                     RemoveFocusFromEditFields();
                     UpdateLocation();
                 }
 
-                if (Button("Reset") && this.m_module.SystemState != SystemStates.PickingTarget)
+                if (Button("Reset") && this.SystemState != SystemStates.PickingTarget)
                 {
                     RemoveFocusFromEditFields();
                     Reset();
@@ -168,14 +176,20 @@ namespace VTS
 
             if (!double.TryParse(this.m_latitudeString, out latitude))
             {
-                this.m_errorMessage = "Invalid latitude";
-                return;
+                if (!AngleUtils.TryParseDMS(this.m_latitudeString, out latitude))
+                {
+                    this.m_errorMessage = "Invalid latitude";
+                    return;
+                }
             }
 
             if (!double.TryParse(this.m_longitudeString, out longitude))
             {
-                this.m_errorMessage = "Invalid longitude";
-                return;
+                if (!AngleUtils.TryParseDMS(this.m_longitudeString, out longitude))
+                {
+                    this.m_errorMessage = "Invalid longitude";
+                    return;
+                }
             }
 
             var location = new GlobalLocation(this.TargetLocation.Body, 

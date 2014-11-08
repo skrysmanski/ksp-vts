@@ -16,11 +16,14 @@
 //
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace KerbalSpaceProgram.Api
 {
     internal static class AngleUtils
     {
+        private static readonly Regex DMS_REGEX = new Regex(@"^ *(-?)(\d+)° +(\d)+' +(\d+)(?:''|"") *$");
+
         [PublicAPI]
         public static double ClampDegrees360(double angle)
         {
@@ -48,6 +51,25 @@ namespace KerbalSpaceProgram.Api
             int seconds = (int)Math.Floor(3600 * (Math.Abs(angle) - degrees - minutes / 60.0));
 
             return string.Format("{0:0}° {1:00}' {2:00}\"", degrees, minutes, seconds);
+        }
+
+        [PublicAPI]
+        public static bool TryParseDMS([NotNull] string dms, out double angle)
+        {
+            var match = DMS_REGEX.Match(dms);
+            if (!match.Success)
+            {
+                angle = 0;
+                return false;
+            }
+
+            int sign = match.Groups[1].Value == "-" ? -1 : 1;
+            int degrees = int.Parse(match.Groups[2].Value);
+            int minutes = int.Parse(match.Groups[3].Value);
+            int seconds = int.Parse(match.Groups[4].Value);
+
+            angle = sign * degrees + (minutes / 60.0) + (seconds / 3600.0);
+            return true;
         }
     }
 }
