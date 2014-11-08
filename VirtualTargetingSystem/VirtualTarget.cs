@@ -65,7 +65,11 @@ namespace VTS
         public void SetLocation(GlobalLocation location)
         {
             this.Location = location;
-            this.m_gameObject.transform.position = location.Position;
+
+            if (location.Body.HasSurface())
+            {
+                this.m_gameObject.transform.position = location.Position;
+            }
         }
 
         public void Draw(Color color)

@@ -22,6 +22,16 @@ namespace KerbalSpaceProgram.Api
 {
     internal static class CelestialBodyExtensions
     {
+        /// <summary>
+        /// Whether this celestial body actually has a surface. In a stock game, only the sun (Kerbol)
+        /// has no surface.
+        /// </summary>
+        [PublicAPI]
+        public static bool HasSurface([NotNull] this CelestialBody body)
+        {
+            return body.pqsController != null;
+        }
+
         [PublicAPI]
         public static Coordinates GetCoordinates([NotNull] this CelestialBody body, Vector3 location)
         {
@@ -45,8 +55,8 @@ namespace KerbalSpaceProgram.Api
         [PublicAPI]
         public static double GetTerrainAltitude([NotNull] this CelestialBody body, Coordinates coordinates)
         {
-            if (body.pqsController == null) {
-                // Sun
+            if (!body.HasSurface())
+            {
                 return 0;
             }
 
@@ -54,10 +64,7 @@ namespace KerbalSpaceProgram.Api
                                      * QuaternionD.AngleAxis(coordinates.Latitude, Vector3d.forward)
                                      * Vector3d.right;
             double ret = body.pqsController.GetSurfaceHeight(pqsRadialVector) - body.pqsController.radius;
-            if (ret < 0) {
-                ret = 0;
-            }
-            return ret;
+            return ret > 0 ? ret : 0;
         }
 
         [PublicAPI]

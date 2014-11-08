@@ -68,7 +68,7 @@ namespace VTS
 
             if (this.m_virtualTarget == null)
             {
-                this.m_virtualTarget = new VirtualTarget(new GlobalLocation(CelestialBodyHelper.Homeworld, new Coordinates()));
+                this.m_virtualTarget = new VirtualTarget(new GlobalLocation(this.CurrentBody, new Coordinates()));
                 this.SystemState = SystemStates.NoTargetSelected;
             }
         }
@@ -84,6 +84,13 @@ namespace VTS
             else if (shouldBeMainModule)
             {
                 VtsCore.Instance.MainModule = this;
+            }
+
+            if (this.CurrentBody != this.m_virtualTarget.Location.Body)
+            {
+                // Reset virtual target whenever we change the SOI.
+                StopPickingVirtualTarget(keepTarget: false);
+                DeleteVirtualTarget();
             }
 
             bool showTargetLine = this.SystemState == SystemStates.TargetSelected
@@ -160,16 +167,6 @@ namespace VTS
             if (this.SystemState == SystemStates.PickingTarget)
             {
                 // Already picking a location.
-                return;
-            }
-
-            if (this.CurrentBody.pqsController == null)
-            {
-                // The Sun (Kerbol) doesn't have a surface.
-                ScreenMessages.PostScreenMessage(
-                    "ERROR: " + this.CurrentBody.bodyName + " doesn't have a surface.",
-                    5.0f, 
-                    ScreenMessageStyle.UPPER_CENTER);
                 return;
             }
 

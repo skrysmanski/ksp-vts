@@ -99,9 +99,9 @@ namespace KerbalSpaceProgram.Api
         }
 
         [PublicAPI]
-        protected static string TextField(string text, int maxLength = -1, GUIStyle guiStyle = null)
+        protected static string TextField(string text, int maxLength = -1, GUIStyle guiStyle = null, params GUILayoutOption[] options)
         {
-            return GUILayout.TextField(text, maxLength, guiStyle ?? HighLogic.Skin.textField);
+            return GUILayout.TextField(text, maxLength, guiStyle ?? HighLogic.Skin.textField, options);
         }
 
         [PublicAPI]

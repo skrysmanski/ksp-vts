@@ -72,6 +72,15 @@ namespace KerbalSpaceProgram.Api
             get { return this.Body.GetWorldSurfacePosition(this.Coordinates, this.Altitude); }
         }
 
+        /// <summary>
+        /// The biome at the specified location.
+        /// </summary>
+        [PublicAPI, NotNull]
+        public string BiomeName
+        {
+            get { return ScienceUtil.GetExperimentBiome(this.Body, this.Coordinates.Latitude, this.Coordinates.Longitude); }
+        }
+
         public GlobalLocation([NotNull] CelestialBody body, Coordinates coordinates) : this()
         {
             this.Body = body;

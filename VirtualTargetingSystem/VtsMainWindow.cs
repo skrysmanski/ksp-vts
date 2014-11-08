@@ -53,6 +53,12 @@ namespace VTS
 
         protected override void OnWindow()
         {
+            if (!this.TargetLocation.Body.HasSurface())
+            {
+                Label("ERROR: " + this.TargetLocation.Body.bodyName + " has no surface.");
+                return;
+            }
+
             if (this.m_module.SystemState != SystemStates.PickingTarget)
             {
                 if (Button("Pick Target Location"))
@@ -73,7 +79,7 @@ namespace VTS
                 }
             }
 
-            if (Button("Set As Target") && this.m_module.SystemState == SystemStates.TargetSelected)
+            if (Button("Set as Target") && this.m_module.SystemState == SystemStates.TargetSelected)
             {
                 this.m_module.SetAsTarget();
             }
@@ -91,20 +97,26 @@ namespace VTS
 
             using (HorizontalLayout)
             {
-                Label("Reference Body");
+                Label("Reference Body:");
                 Label(this.TargetLocation.Body.bodyName);
             }
 
             using (HorizontalLayout)
             {
-                Label("Latitude");
-                this.m_latitudeString = TextField(this.m_latitudeString);
+                Label("Latitude:");
+                this.m_latitudeString = TextField(this.m_latitudeString, options: GUILayout.ExpandHeight(false));
             }
 
             using (HorizontalLayout)
             {
-                Label("Longitude");
-                this.m_longitudeString = TextField(this.m_longitudeString);
+                Label("Longitude:");
+                this.m_longitudeString = TextField(this.m_longitudeString, options: GUILayout.ExpandHeight(false));
+            }
+
+            using (HorizontalLayout)
+            {
+                Label("Biome:");
+                Label(this.TargetLocation.BiomeName);
             }
 
             using (HorizontalLayout)
