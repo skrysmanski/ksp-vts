@@ -108,9 +108,12 @@ namespace VTS
         [UsedImplicitly]
         public void OnDestroy()
         {
-            StopPickingVirtualTarget(keepTarget: false);
+            if (this.m_virtualTarget != null)
+            {
+                StopPickingVirtualTarget(keepTarget: false);
 
-            this.m_virtualTarget.Dispose();
+                this.m_virtualTarget.Dispose();
+            }
 
             if (VtsCore.Instance != null && VtsCore.Instance.MainModule == this)
             {
