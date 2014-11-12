@@ -23,6 +23,38 @@ namespace KerbalSpaceProgram.Api
 {
     internal class Line : MonoBehaviour, IDisposable
     {
+        private const string LINE_SHADER_DEF = @"Shader ""Vertex Colors/Alpha"" 
+                                                 {
+                                                    Category
+                                                    {
+                                                        Tags
+                                                        {
+                                                            ""Queue""=""Overlay""
+                                                            ""IgnoreProjector""=""True""
+                                                            ""RenderType""=""Transparent""
+                                                        }
+
+                                                        SubShader
+                                                        {
+                                                            Cull Off
+                                                            ZWrite On
+                                                            AlphaTest Off
+                                                            Blend Add
+
+                                                            Pass
+                                                            {
+                                                                BindChannels
+                                                                {
+                                                                    Bind ""Color"", color Bind ""Vertex"", vertex
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }";
+
+        private static readonly Lazy<Material> s_lineMaterial =
+            new Lazy<Material>(() => new Material(LINE_SHADER_DEF));
+
         /// <summary>
         /// Width of the line in pixels. Defaults to 1 pixel.
         /// </summary>
@@ -56,6 +88,9 @@ namespace KerbalSpaceProgram.Api
         private readonly Vector3[] m_points2D = new Vector3[4];
         private readonly Vector3[] m_points3D = new Vector3[4];
 
+        [Obsolete("Don't use this constructor. Use 'Instatiate()' instead.")]
+        public Line() { }
+
         /// <summary>
         /// Creates a new line instance. Destroy it via <see cref="Dispose"/> when
         /// you no longer need it.
@@ -77,25 +112,30 @@ namespace KerbalSpaceProgram.Api
             this.m_endWorldPos = endWorldPos;
         }
 
+        // TODO: We need to connect this to the camera somehow so that we can change this to "PreCull()". Without this,
+        //   the line's coordinates are always one frame behind (probably because the camera's position is changed after
+        //   this method has been called).
         [UsedImplicitly]
-        public void Update()
+        public void LateUpdate()
         {
-            // ReSharper disable once LocalVariableHidesMember
-            Camera camera = PlanetariumCamera.Camera;
+            Camera theCamera = PlanetariumCamera.Camera;
 
-            var startScreenPos = camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(this.m_startWorldPos));
-            var endScreenPos = camera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(this.m_endWorldPos));
+            var startScreenPos = theCamera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(this.m_startWorldPos));
+            var endScreenPos = theCamera.WorldToScreenPoint(ScaledSpace.LocalToScaledSpace(this.m_endWorldPos));
 
             Vector2 directionOnScreen = endScreenPos - startScreenPos;
             directionOnScreen.Normalize();
 
             var segment = new Vector3(-directionOnScreen.y, directionOnScreen.x, 0) * (LineWidth / 2);
 
+            bool draw3DLines = true;
+
             if (MapView.MapIsEnabled && !MapView.Draw3DLines)
             {
                 var dist = Screen.height / 2.0f + 0.01f;
                 startScreenPos.z = startScreenPos.z >= 0.15f ? dist : -dist;
                 endScreenPos.z = endScreenPos.z >= 0.15f ? dist : -dist;
+                draw3DLines = false;
             }
 
             this.m_points2D[0] = (startScreenPos - segment);
@@ -103,12 +143,12 @@ namespace KerbalSpaceProgram.Api
             this.m_points2D[2] = (endScreenPos - segment);
             this.m_points2D[3] = (endScreenPos + segment);
 
-            this.m_points3D[0] = camera.ScreenToWorldPoint(this.m_points2D[0]);
-            this.m_points3D[1] = camera.ScreenToWorldPoint(this.m_points2D[1]);
-            this.m_points3D[2] = camera.ScreenToWorldPoint(this.m_points2D[2]);
-            this.m_points3D[3] = camera.ScreenToWorldPoint(this.m_points2D[3]);
+            this.m_points3D[0] = theCamera.ScreenToWorldPoint(this.m_points2D[0]);
+            this.m_points3D[1] = theCamera.ScreenToWorldPoint(this.m_points2D[1]);
+            this.m_points3D[2] = theCamera.ScreenToWorldPoint(this.m_points2D[2]);
+            this.m_points3D[3] = theCamera.ScreenToWorldPoint(this.m_points2D[3]);
 
-            this.m_meshFilter.mesh.vertices = MapView.Draw3DLines ? this.m_points3D : this.m_points2D;
+            this.m_meshFilter.mesh.vertices = draw3DLines ? this.m_points3D : this.m_points2D;
             this.m_meshFilter.mesh.RecalculateBounds();
         }
 
@@ -122,9 +162,9 @@ namespace KerbalSpaceProgram.Api
         public void Awake()
         {
             SetupMesh();
-            this.gameObject.layer = 31;
+            this.gameObject.layer = 18;
             this.gameObject.AddComponent<MeshRenderer>();
-            this.renderer.material = new Material("Shader \"Vertex Colors/Alpha\" {Category{Tags {\"Queue\"=\"Transparent\" \"IgnoreProjector\"=\"True\" \"RenderType\"=\"Transparent\"}SubShader {Cull Off ZWrite On Blend SrcAlpha OneMinusSrcAlpha Pass {BindChannels {Bind \"Color\", color Bind \"Vertex\", vertex}}}}}");
+            this.renderer.material = s_lineMaterial.Value;
 
             this.LineWidth = 1.0f;
             this.Color = Color.white;

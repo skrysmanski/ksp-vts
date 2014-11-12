@@ -72,9 +72,12 @@ namespace VTS
             }
         }
 
-        public void Draw(Color color)
+        public double GetDistance(Vessel vessel)
         {
-            GuiUtils.DrawMapViewGroundMarker(this.Location, color);
+            var targetPos = this.Location.Position;
+            var vesselPos = vessel.GetWorldPos3D();
+
+            return (targetPos - vesselPos).magnitude;
         }
 
         public void EnableTargetLine(bool enable, Color color)

@@ -15,6 +15,7 @@
 // along with this code.  If not, see <http://www.gnu.org/licenses/>. 
 //
 
+using System;
 using KerbalSpaceProgram.Api;
 using UnityEngine;
 
@@ -115,6 +116,13 @@ namespace VTS
                 this.m_module.DeleteVirtualTarget();
                 Reset();
             }
+
+#if DEBUG
+            if (Button("Show Log Console"))
+            {
+                HighLogic.fetch.showConsole = !HighLogic.fetch.showConsole;
+            }
+#endif
 
             if (this.m_errorMessage != null)
             {

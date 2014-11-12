@@ -183,6 +183,7 @@ namespace VTS
             {
                 this.m_prePickingPlanetariumFocus = PlanetariumCamera.fetch.target;
                 PlanetariumCamera.fetch.SetTarget(targetMapObject);
+                this.vessel.orbitTargeter.enabled = false;
             }
             else
             {
@@ -220,6 +221,7 @@ namespace VTS
             this.m_prePickingPlanetariumFocus = null;
             ScreenMessages.RemoveMessage(this.m_pickingScreenMessage);
             Screen.showCursor = true;
+            this.vessel.orbitTargeter.enabled = true;
         }
 
         internal void SetTargetLocation(GlobalLocation location)
@@ -242,19 +244,49 @@ namespace VTS
 
         internal void DrawMarkers()
         {
-            if (this.SystemState == SystemStates.NoTargetSelected || !MapView.MapIsEnabled)
+            if (this.SystemState == SystemStates.NoTargetSelected)
             {
                 return;
             }
 
-            this.m_virtualTarget.Draw(this.SystemState == SystemStates.TargetSelected ? POSITION_COLOR : PICKING_COLOR);
-
-            if (this.SystemState == SystemStates.PickingTarget && this.m_isMouseOverPickingBody)
+            if (MapView.MapIsEnabled)
             {
-                var coords = this.m_virtualTarget.Location.Coordinates;
-                GUI.Label(new Rect(Input.mousePosition.x + 15, Screen.height - Input.mousePosition.y, 200, 50),
-                    coords.ToStringDecimal() + "\n"
-                    + ScienceUtil.GetExperimentBiome(this.m_virtualTarget.Location.Body, coords.Latitude, coords.Longitude));
+                GuiUtils.DrawMapViewGroundMarker(this.m_virtualTarget.Location,
+                                                 this.SystemState == SystemStates.TargetSelected ? POSITION_COLOR : PICKING_COLOR);
+
+                if (this.SystemState == SystemStates.PickingTarget && this.m_isMouseOverPickingBody)
+                {
+                    var coords = this.m_virtualTarget.Location.Coordinates;
+                    GUI.Label(new Rect(Input.mousePosition.x + 15, Screen.height - Input.mousePosition.y, 200, 50),
+                        coords.ToStringDecimal() + "\n"
+                        + ScienceUtil.GetExperimentBiome(this.m_virtualTarget.Location.Body, coords.Latitude, coords.Longitude));
+                }
+            }
+            else
+            {
+                double distance = this.m_virtualTarget.GetDistance(this.vessel);
+                double radius;
+                if (distance < 1000)
+                {
+                    radius = 30;
+                }
+                else if (distance < 10000)
+                {
+                    radius = 300;
+                }
+                else if (distance < 100000)
+                {
+                    radius = 3000;
+                }
+                else
+                {
+                    radius = -1;
+                }
+
+                if (radius > 0)
+                {
+                    GuiUtils.DrawMapViewGroundMarker(this.m_virtualTarget.Location, POSITION_COLOR, radius: radius);
+                }
             }
         }
     }

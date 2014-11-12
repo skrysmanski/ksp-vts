@@ -15,8 +15,8 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Output\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -50,6 +50,7 @@
     <Compile Include="Api\CelestialBodyExtensions.cs" />
     <Compile Include="Api\CelestialBodyHelper.cs" />
     <Compile Include="Api\Coordinates.cs" />
+    <Compile Include="Api\Lazy.cs" />
     <Compile Include="Api\MouseButtons.cs" />
     <Compile Include="Api\PartModuleExtensions.cs" />
     <Compile Include="Api\PluginCore.cs" />
@@ -83,7 +84,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>(robocopy "$(ProjectDir)Output" "$(KspPath)\GameData\VirtualTargetingSystem" /MIR /XF MiniAVC.dll) ^&amp; IF %25ERRORLEVEL%25 LEQ 1 exit 0
-</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
