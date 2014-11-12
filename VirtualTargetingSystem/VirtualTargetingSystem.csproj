@@ -79,6 +79,9 @@
     <None Include="Output\VirtualTargetingSystem.version" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\CHANGELOG.txt">
+      <Link>CHANGELOG.txt</Link>
+    </Content>
     <Content Include="Output\Resources\texMainWindowButton.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

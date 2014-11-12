@@ -1,0 +1,14 @@
+0.9.1, 12 Nov 2014
+	Added: VTS will now display "Biome", "Altitude", and "Distance" of the specified coordinates.
+	Added: Users can now enter longitude and latitude in DMS notation.
+	Added: Ground marker is now also visible in flight mode and will scale according to the distance from the vessel.
+
+	Fixed: The reference body now correctly follows the ships. (Kerbin is no longer preselected every time.)
+	Fixed: For celestial bodies without surface (Kerbol) VTS is now disabled.
+	Fixed: Edit controls and their labels are now properly aligned in the main window.
+	Fixed: Pressing return no longer causes a line break when editing longitude or latitude. Instead the field will just lose its focus.
+	Fixed: Clicking any button in the VTS window will now also remove the focus from the latitude/longitude edit fields.
+	Fixed: Orbit target bubble/thingy is now disabled when picking a target in map view.
+
+0.9.0, 5 Nov 2014
+	Initial release
